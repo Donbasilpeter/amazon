@@ -4,6 +4,8 @@ import fs from 'fs';
 
 const userDataDir = 'C:/Users/donba/AppData/Local/Google/Chrome/User Data';
 let targetUrl = 'https://hvr-amazon.my.site.com/BBIndex?refURL=https%3A%2F%2Fhvr-amazon.my.site.com%2FIndex';
+const searchText = "St. Thomas, ON Canada";
+
 
 // Run the function
 refreshBrowser();
@@ -23,7 +25,7 @@ async function refreshBrowser() {
     while (1) {
 
       let reloadedPage = await reloadPage(page)
-      let jobs = await jobFound(reloadedPage)
+      let jobs = await jobFound(reloadedPage,searchText)
       if (jobs) {
 
         const outputString = `Job Found: ${new Date().toLocaleString()}\n`;
@@ -80,17 +82,16 @@ let reloadPage = async (page) => {
 
 }
 
-let jobFound = async (page) => {
-  return await page.evaluate(() => {
-    const searchText = "St. Thomas, ON Canada";
-
+let jobFound = async (page,searchText) => {
+  return await page.evaluate((searchText) => {
+    
     // Find all elements that contain the specified text
     const elements = Array.from(document.querySelectorAll('*')).filter(element => element.textContent.includes(searchText));
 
     // Return the first matching element or null if not found
     if(elements.length>0) return true
     return false
-  });
+  },searchText);
 }
 
 
