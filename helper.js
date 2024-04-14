@@ -15,7 +15,7 @@ async function refreshBrowser(userDataDir,targetUrl,searchText) {
       await page.goto(targetUrl);
   
       while (1) {
-  
+
         let reloadedPage = await reloadPage(page)
         let jobs = await jobFound(reloadedPage,searchText)
         if (jobs) {
@@ -24,6 +24,7 @@ async function refreshBrowser(userDataDir,targetUrl,searchText) {
           console.log(outputString);
           outputStream.write(outputString);
           playSound().play('./alert.mp3');
+          refreshBrowser(userDataDir,targetUrl,searchText)
           break;
         }
         else {
@@ -41,7 +42,7 @@ async function refreshBrowser(userDataDir,targetUrl,searchText) {
   
     } catch (error) {
       console.error('Error:', error);
-      playSound().play('./alert.mp3');
+      refreshBrowser(userDataDir,targetUrl,searchText)
     }
   }
 
@@ -75,17 +76,21 @@ async function refreshBrowser(userDataDir,targetUrl,searchText) {
   
   }
 
-  let jobFound = async (page,searchText) => {
+  let jobFound = async (page, searchText) => {
     return await page.evaluate((searchText) => {
-      
-      // Find all elements that contain the specified text
-      const elements = Array.from(document.querySelectorAll('*')).filter(element => element.textContent.includes(searchText));
-  
-      // Return the first matching element or null if not found
-      if(elements.length>0) return true
-      return false
-    },searchText);
-  }
+        // Loop through each search text in the array
+        for (const eachText of searchText) {
+            // Find all elements that contain the current search text
+            const elements = Array.from(document.querySelectorAll('*')).filter(element => element.textContent.includes(eachText));
+
+            // If any element is found with the current search text, return true
+            if (elements.length > 0) return true;
+        }
+        // If none of the search texts are found, return false
+        return false;
+    }, searchText);
+}
+
 
 
   export default refreshBrowser

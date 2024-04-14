@@ -1,20 +1,13 @@
-
 import JobLookup from "./helper.js";
-import dotenv from 'dotenv';
+import fs from 'fs';
 
-dotenv.config();
+// Read the configuration from config.json
+const configData = fs.readFileSync('./config.json');
+const config = JSON.parse(configData);
 
-const userDataDir = process.env.USER_DATA_DIR
-let targetUrl = process.env.TARGET_URL
-const searchText = process.env.SEARCH_TEXT
+const userDataDir = config.USER_DATA_DIR;
+let targetUrl = config.TARGET_URL;
+const searchText = config.SEARCH_TEXT;
 
 // Run the function
-JobLookup(userDataDir,targetUrl,searchText);
-
-
-
-
-
-
-
-
+JobLookup(userDataDir, targetUrl, searchText);
